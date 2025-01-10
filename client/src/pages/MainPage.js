@@ -8,10 +8,11 @@ export default function MainPage() {
   const [amountInSourceCurrency, setAmountInSourceCurrency] = useState(0);
   const [amountInTargetCurrency, setAmountInTargetCurrency] = useState(0);
   const [currencyNames, setCurrencyNames] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
       const response = await axios.get("http://localhost:5000/convert", {
         params: {
@@ -21,11 +22,11 @@ export default function MainPage() {
           amountInSourceCurrency,
         },
       });
-
       setAmountInTargetCurrency(response.data);
-      setLoading(false);
     } catch (err) {
       console.log(err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -146,16 +147,21 @@ export default function MainPage() {
           </form>
         </section>
       </div>
-      {!loading ? (
-        <section className="mt-5 lg:mx-72 text-xl">
+      {loading ? (
+        <div className="flex justify-center items-center mt-5">
           <div className="w-8 h-8 border-4 border-green-500 border-t-transparent rounded-full animate-spin"></div>
-          {amountInSourceCurrency} {currencyNames[sourceCurrency]} is equals to{" "}
-          <span className="text-green-500 font-bold">
-            {amountInTargetCurrency}
-          </span>{" "}
-          in {currencyNames[targetCurrency]}
-        </section>
-      ) : null}
+        </div>
+      ) : (
+        amountInTargetCurrency > 0 && (
+          <section className="mt-5 lg:mx-72 text-xl">
+            {amountInSourceCurrency} {currencyNames[sourceCurrency]} is equal to{" "}
+            <span className="text-green-500 font-bold">
+              {amountInTargetCurrency}
+            </span>{" "}
+            in {currencyNames[targetCurrency]}.
+          </section>
+        )
+      )}
     </div>
   );
 }
