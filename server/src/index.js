@@ -2,6 +2,8 @@ const express = require("express");
 const cors = require("cors");
 const axios = require("axios");
 
+require("dotenv").config();
+
 const app = express();
 
 //Middlewares
@@ -11,7 +13,7 @@ app.use(cors());
 
 //all currencies
 app.get("/getAllCurrencies", async (req, res) => {
-  const nameURL = `https://openexchangerates.org/api/currencies.json?app_id=95a1d508300a4797b8113903394382f2`;
+  const nameURL = `https://openexchangerates.org/api/currencies.json?app_id=${process.env.API_KEY}`;
 
   try {
     const namesResponse = await axios.get(nameURL);
@@ -27,7 +29,7 @@ app.get("/convert", async (req, res) => {
     req.query;
 
   try {
-    const dataURL = `https://openexchangerates.org/api/historical/${date}.json?app_id=95a1d508300a4797b8113903394382f2`;
+    const dataURL = `https://openexchangerates.org/api/historical/${date}.json?app_id=${process.env.API_KEY}`;
     const dataResponse = await axios.get(dataURL);
     const rates = dataResponse.data.rates;
 
